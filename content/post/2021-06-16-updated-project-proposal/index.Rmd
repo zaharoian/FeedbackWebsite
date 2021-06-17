@@ -1,0 +1,56 @@
+---
+title: Updated Project Proposal
+author: Zachary Haroian
+date: '2021-06-16'
+slug: updated-project-proposal
+bibliography: bibliography.bib
+csl: apa.csl
+categories: []
+tags: []
+---
+
+# Overview
+
+Hackers use Bitcoin to extort their victims, and run the Bitcoin through thousands of accounts before attempting to convert it to real currency. Because Bitcoin uses an anonymized public ledger, it is possible to trace these funds and identify the criminal once they have pulled the funds, and freeze their assets. Tracing these funds is extremely tedious, and with the aid of machine learning we can help automate the process of tracking down these criminals and even recover victim's funds. This is crucial as cryptocurrency begins to grow in popularity.
+
+# Context
+
+Bitcoin uses a distributed, public ledger secured through the blockchain. All transactions occur between two distinct public addresses and are immutable [@nakamotobitcoin]. There is no limit to the number of Bitcoin addresses that any individual or organization can make, nor a verification requirement. Hackers will move and distribute funds through the network to avoid detection by law enforcement.
+
+Ransomware is one of the fastest growing types of cybercrime [@cybercrimelewis]. It is a type of malware that locks down a victim's data and demands a ransom to release them [@MANSFIELDDEVINE20168]. Hackers have stolen \$1.7 billion worth of cryptocurrency since 2011. Tracing stolen funds in order to freeze assets is one of the most effective ways of safeguarding against future attacks. They are traced through thousands of different address until the funds are cashed out by a service, where law enforcement can issues a subpoena to unmask their identity.
+
+Being able to identify these funds automatically through classification could greatly increase law enforcement's ability to catch criminals attempting to cash out their stolen funds [@paquetclouston2018ransomware, @8418627, @Conti_2018]. This can help return stolen money and help disincentivize future attacks.
+
+# Proposal
+
+The goal of this project is to identify Bitcoin addresses that ransomware accounts use to cleanse money, and identify possible problematic addresses based on network behavior with crowd-sourced reports of foul play. @akcora2019bitcoinheist provides an aggregated dataset of the Bitcoin network, labeled with addresses of known ransomware accounts.
+
+To begin the analysis, I will determine the best performing classifier to use on this dataset, and tuning its hyperparameters on a training set from 2012 - 2016 with cross-validation, using 2017 - 2019 as a test set. My outcome variable is a factor variable with two levels, "normal" transaction and "ransomware" transaction. The dataset provided contains 8 features. Within a 24 hour window, the earliest set of transactions that do not receive outputs from any earlier transaction within the window. These are referred to as a **starter** transaction.
+
+-   **Date**
+
+-   **Label**: Either ransomware or normal transaction
+
+-   **Income**: The total amount of Bitcoin output to the address
+
+-   **Account Age:** The number of days since the address's first transaction.
+
+-   **Neighbors**: The number of transactions which have the address listed as one of its output addresses.
+
+-   **Loop**: The number of starter transactions which are connected to the address with more than one directed path. This is intended to count how many transactions split their coins, move them around the network, and merge them into a single address. The coins at the final address can then be sold and converted into a fiat currency.
+
+-   **Weight**: The sum of fraction of coins that originate from a starter transaction and reach the address within 24 hours. This is meant to quantify the merge behavior, such as whether the transaction has more input addresses than output addresses, where coins in multiple addresses are each passed through a succession of merging transactions and accumulated in a final address.
+
+-   **Count**: The number of starter transactions which are connected to the address through a chain, where a chain is defined as an acyclic directed path originating from any starter transaction and ending at the address. Again, this is meant to quantify the merging pattern, but it represents information on the number of transactions, whereas weight represents information on the amount put through.
+
+-   **Length**: The number of non-starter transactions on its longest chain within 24 hours, where a chain is defined as an acyclic directed path originating from any starter address and ending at the address. A length of zero implies that the address is an output address of a starter transaction. It is meant to quantify mixing rounds, where transactions receive and distribute similar amounts of coins in multiple rounds with newly created addresses to hide the coin origin.
+
+I hope to train a classifier with \~80% balanced accuracy, with a preference toward reducing false positives (in this case, Bitcoin addresses classified as ransomware that are actually innocent).
+
+# Conclusion
+
+Ransomware hackers typically use Bitcoin to extort payment from victims, but with the transactions they use to clean the Bitcoin before using a service to convert it to a fiat currency can be traced to determine the identity of the criminal. My proposed solution is to build a model to identify addresses/transactions that may be involved in cleaning Bitcoin within the network.
+
+The model most likely can't be generalized in this form, but if it is successful then it shows that this is might be a viable solution to attempt to implement using the full blockchain (e.i. not just a small sample of the ledger). The main limitations are that this data is aggregated, so we are not looking at transaction level data, which may give a more detailed perspective. Additionally, there may be ransomware that has not been identified within this dataset, so there is almost certainly going to be some fuzziness when it comes to drawing strict conclusions from the differences between the two populations. Those marked as ransomware are guaranteed to be ransomware, just not the other way around. As I mentioned above, the future direction this project could go would be to build a model using transaction level data, and scan the ledger as new entries get added.
+
+# References

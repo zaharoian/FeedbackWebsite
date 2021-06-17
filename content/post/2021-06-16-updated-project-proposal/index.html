@@ -1,0 +1,72 @@
+---
+title: Updated Project Proposal
+author: Zachary Haroian
+date: '2021-06-16'
+slug: updated-project-proposal
+bibliography: bibliography.bib
+csl: apa.csl
+categories: []
+tags: []
+---
+
+<script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
+
+
+<div id="overview" class="section level1">
+<h1>Overview</h1>
+<p>Hackers use Bitcoin to extort their victims, and run the Bitcoin through thousands of accounts before attempting to convert it to real currency. Because Bitcoin uses an anonymized public ledger, it is possible to trace these funds and identify the criminal once they have pulled the funds, and freeze their assets. Tracing these funds is extremely tedious, and with the aid of machine learning we can help automate the process of tracking down these criminals and even recover victim’s funds. This is crucial as cryptocurrency begins to grow in popularity.</p>
+</div>
+<div id="context" class="section level1">
+<h1>Context</h1>
+<p>Bitcoin uses a distributed, public ledger secured through the blockchain. All transactions occur between two distinct public addresses and are immutable <span class="citation">(<a href="#ref-nakamotobitcoin" role="doc-biblioref">Nakamoto, 2008</a>)</span>. There is no limit to the number of Bitcoin addresses that any individual or organization can make, nor a verification requirement. Hackers will move and distribute funds through the network to avoid detection by law enforcement.</p>
+<p>Ransomware is one of the fastest growing types of cybercrime <span class="citation">(<a href="#ref-cybercrimelewis" role="doc-biblioref">Lewis, 2018</a>)</span>. It is a type of malware that locks down a victim’s data and demands a ransom to release them <span class="citation">(<a href="#ref-MANSFIELDDEVINE20168" role="doc-biblioref">Mansfield-Devine, 2016</a>)</span>. Hackers have stolen $1.7 billion worth of cryptocurrency since 2011. Tracing stolen funds in order to freeze assets is one of the most effective ways of safeguarding against future attacks. They are traced through thousands of different address until the funds are cashed out by a service, where law enforcement can issues a subpoena to unmask their identity.</p>
+<p>Being able to identify these funds automatically through classification could greatly increase law enforcement’s ability to catch criminals attempting to cash out their stolen funds <span class="citation"><a href="#ref-Conti_2018" role="doc-biblioref">Conti et al.</a> (<a href="#ref-Conti_2018" role="doc-biblioref">2018</a>)</span>. This can help return stolen money and help disincentivize future attacks.</p>
+</div>
+<div id="proposal" class="section level1">
+<h1>Proposal</h1>
+<p>The goal of this project is to identify Bitcoin addresses that ransomware accounts use to cleanse money, and identify possible problematic addresses based on network behavior with crowd-sourced reports of foul play. <span class="citation"><a href="#ref-akcora2019bitcoinheist" role="doc-biblioref">Akcora et al.</a> (<a href="#ref-akcora2019bitcoinheist" role="doc-biblioref">2019</a>)</span> provides an aggregated dataset of the Bitcoin network, labeled with addresses of known ransomware accounts.</p>
+<p>To begin the analysis, I will determine the best performing classifier to use on this dataset, and tuning its hyperparameters on a training set from 2012 - 2016 with cross-validation, using 2017 - 2019 as a test set. My outcome variable is a factor variable with two levels, “normal” transaction and “ransomware” transaction. The dataset provided contains 8 features. Within a 24 hour window, the earliest set of transactions that do not receive outputs from any earlier transaction within the window. These are referred to as a <strong>starter</strong> transaction.</p>
+<ul>
+<li><p><strong>Date</strong></p></li>
+<li><p><strong>Label</strong>: Either ransomware or normal transaction</p></li>
+<li><p><strong>Income</strong>: The total amount of Bitcoin output to the address</p></li>
+<li><p><strong>Account Age:</strong> The number of days since the address’s first transaction.</p></li>
+<li><p><strong>Neighbors</strong>: The number of transactions which have the address listed as one of its output addresses.</p></li>
+<li><p><strong>Loop</strong>: The number of starter transactions which are connected to the address with more than one directed path. This is intended to count how many transactions split their coins, move them around the network, and merge them into a single address. The coins at the final address can then be sold and converted into a fiat currency.</p></li>
+<li><p><strong>Weight</strong>: The sum of fraction of coins that originate from a starter transaction and reach the address within 24 hours. This is meant to quantify the merge behavior, such as whether the transaction has more input addresses than output addresses, where coins in multiple addresses are each passed through a succession of merging transactions and accumulated in a final address.</p></li>
+<li><p><strong>Count</strong>: The number of starter transactions which are connected to the address through a chain, where a chain is defined as an acyclic directed path originating from any starter transaction and ending at the address. Again, this is meant to quantify the merging pattern, but it represents information on the number of transactions, whereas weight represents information on the amount put through.</p></li>
+<li><p><strong>Length</strong>: The number of non-starter transactions on its longest chain within 24 hours, where a chain is defined as an acyclic directed path originating from any starter address and ending at the address. A length of zero implies that the address is an output address of a starter transaction. It is meant to quantify mixing rounds, where transactions receive and distribute similar amounts of coins in multiple rounds with newly created addresses to hide the coin origin.</p></li>
+</ul>
+<p>I hope to train a classifier with ~80% balanced accuracy, with a preference toward reducing false positives (in this case, Bitcoin addresses classified as ransomware that are actually innocent).</p>
+</div>
+<div id="conclusion" class="section level1">
+<h1>Conclusion</h1>
+<p>Ransomware hackers typically use Bitcoin to extort payment from victims, but with the transactions they use to clean the Bitcoin before using a service to convert it to a fiat currency can be traced to determine the identity of the criminal. My proposed solution is to build a model to identify addresses/transactions that may be involved in cleaning Bitcoin within the network.</p>
+<p>The model most likely can’t be generalized in this form, but if it is successful then it shows that this is might be a viable solution to attempt to implement using the full blockchain (e.i. not just a small sample of the ledger). The main limitations are that this data is aggregated, so we are not looking at transaction level data, which may give a more detailed perspective. Additionally, there may be ransomware that has not been identified within this dataset, so there is almost certainly going to be some fuzziness when it comes to drawing strict conclusions from the differences between the two populations. Those marked as ransomware are guaranteed to be ransomware, just not the other way around. As I mentioned above, the future direction this project could go would be to build a model using transaction level data, and scan the ledger as new entries get added.</p>
+</div>
+<div id="references" class="section level1 unnumbered">
+<h1>References</h1>
+<div id="refs" class="references csl-bib-body hanging-indent" line-spacing="2">
+<div id="ref-akcora2019bitcoinheist" class="csl-entry">
+Akcora, C. G., Li, Y., Gel, Y. R., &amp; Kantarcioglu, M. (2019). <em>BitcoinHeist: Topological data analysis for ransomware detection on the bitcoin blockchain</em>. <a href="http://arxiv.org/abs/1906.07852">http://arxiv.org/abs/1906.07852</a>
+</div>
+<div id="ref-Conti_2018" class="csl-entry">
+Conti, M., Gangwal, A., &amp; Ruj, S. (2018). On the economic significance of ransomware campaigns: A bitcoin transactions perspective. <em>Computers &amp; Security</em>, <em>79</em>, 162–189. <a href="https://doi.org/10.1016/j.cose.2018.08.008">https://doi.org/10.1016/j.cose.2018.08.008</a>
+</div>
+<div id="ref-8418627" class="csl-entry">
+Huang, D. Y., Aliapoulios, M. M., Li, V. G., Invernizzi, L., Bursztein, E., McRoberts, K., Levin, J., Levchenko, K., Snoeren, A. C., &amp; McCoy, D. (2018). <em>Tracking ransomware end-to-end</em>. 618–631. <a href="https://doi.org/10.1109/SP.2018.00047">https://doi.org/10.1109/SP.2018.00047</a>
+</div>
+<div id="ref-cybercrimelewis" class="csl-entry">
+Lewis, J. (2018). <em>Economic impact of cybercrime – no slowing down</em>.
+</div>
+<div id="ref-MANSFIELDDEVINE20168" class="csl-entry">
+Mansfield-Devine, S. (2016). Ransomware: Taking businesses hostage. <em>Network Security</em>, <em>2016</em>(10), 8–17. <a href="https://doi.org/10.1016/S1353-4858(16)30096-4">https://doi.org/10.1016/S1353-4858(16)30096-4</a>
+</div>
+<div id="ref-nakamotobitcoin" class="csl-entry">
+Nakamoto, S. (2008). <em>Bitcoin: A peer-to-peer electronic cash system</em>.
+</div>
+<div id="ref-paquetclouston2018ransomware" class="csl-entry">
+Paquet-Clouston, M., Haslhofer, B., &amp; Dupont, B. (2018). <em>Ransomware payments in the bitcoin ecosystem</em>. <a href="http://arxiv.org/abs/1804.04080">http://arxiv.org/abs/1804.04080</a>
+</div>
+</div>
+</div>
