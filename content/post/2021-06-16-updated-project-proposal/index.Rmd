@@ -45,6 +45,8 @@ To begin the analysis, I will determine the best performing classifier to use on
 
 -   **Length**: The number of non-starter transactions on its longest chain within 24 hours, where a chain is defined as an acyclic directed path originating from any starter address and ending at the address. A length of zero implies that the address is an output address of a starter transaction. It is meant to quantify mixing rounds, where transactions receive and distribute similar amounts of coins in multiple rounds with newly created addresses to hide the coin origin.
 
+<!--- I think this is a good start Zach; however, I'm going to push you to get more creative with your feature engineering. How can you stretch what you have? For instance, perhaps you could look at distributions and differences. There is going to be a "normal" distribution of income and then deviations from from this distribution. This sort of thing coud act as a flag. This is just one example, but I want you to keep thinking about it. -->
+
 I hope to train a classifier with \~80% balanced accuracy, with a preference toward reducing false positives (in this case, Bitcoin addresses classified as ransomware that are actually innocent).
 
 # Conclusion
