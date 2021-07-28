@@ -1,0 +1,155 @@
+---
+title: 'FAKE NEWS: How we can stem the spread of fake news through machine learning'
+author: Zachary Haroian
+date: '2021-07-27'
+slug: fake-news-classifying-falsehoods-through-stylometric-analysis
+bibliography: bibliography.bib
+csl: apa.csl
+categories: []
+tags: []
+---
+
+<script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
+<script src="{{< blogdown/postref >}}index_files/kePrint/kePrint.js"></script>
+<link href="{{< blogdown/postref >}}index_files/lightable/lightable.css" rel="stylesheet" />
+
+
+<p><img src="images/fake-news-hero-img.jpg" /></p>
+<div id="the-problem" class="section level1">
+<h1>The Problem</h1>
+<p>Fake news is currently seeping it way through society, spreading falsehoods and manipulating its readers into a sense of fear and urgency. Fake news is defined as fabricated information that mimics news media content without the editorial norms and processes for ensuring accuracy and credibility of information <span class="citation">(<a href="#ref-lazer_2018" role="doc-biblioref">Lazer et al., 2018</a>)</span>. It is parasitic on standard news outlets, both benefiting from and undermining their credibility. Social media platforms act as a key conduit for fake news sites, as the ease of creating fake profiles makes impersonation trivial <span class="citation">(<a href="#ref-allcott_2017" role="doc-biblioref">Allcott &amp; Gentzkow, 2017</a>)</span>. About 47% of Americans report getting news from social media often or sometimes, with Facebook as the dominant source <span class="citation">(<a href="#ref-shearer_2017" role="doc-biblioref">Shearer &amp; Gottfried, 2017</a>)</span>.</p>
+<p>The rise of fake news is recent, but is not a novel occurrence. After the widespread use of propaganda in World War I, journalists moved to remain more objective and focused on building public trust and credibility. This trust has been severely eroded due to the internet, where the competition has a much lower cost of entry to distribute information. What was once gatekept by large news corporations can now be done by anyone with a computer and an internet connection. The lack of trust reached a historic low in 2016, with 51% of Democrats and 14% of Republicans expressing “a fair amount” or “a great deal” of trust in mass media as a news source <span class="citation">(<a href="#ref-swift_2016" role="doc-biblioref">Swift, 2016</a>)</span>.</p>
+<p>Part of the problem with fake news is how easily it spreads. False information on Twitter is typically retweeted by many more people, and far more rapidly, than true information, especially when the topic is politics. This phenomenon of virality is hard to combat, as it is incredibly hard to find each person that was exposed to the falsehood and convince them of the truth. Surprisingly, robots accelerate the spread of true and false news at the same rate, implying that false news spreads more than truth because of humans <span class="citation">(<a href="#ref-vosoughi_2018" role="doc-biblioref">Vosoughi et al., 2018</a>)</span>. In fact, the most popular fake news stories in the last three months of the presidential campaign generated more engagement on Facebook than the top real news stories.</p>
+</div>
+<div id="potential-solutions" class="section level1">
+<h1>Potential Solutions</h1>
+<div id="empowering-readers" class="section level2">
+<h2>Empowering Readers</h2>
+<div id="fact-checking" class="section level3">
+<h3>Fact Checking</h3>
+<p>Fact checking has been adopted by many websites to evaluate the veracity of claims posted on the internet. Despite its prevalence, it struggles to combat the spread of fake news. This occurs for a couple of reasons. Individuals will only seek to explore a claim’s accuracy if it disagrees with their inner beliefs or they are incentivized to do so. Typically, readers ingest information without thinking critically about its source, especially on informal, social platforms. Further, people are prone to confirmation bias and desirability bias. They prefer information that confirms their preexisting beliefs, and are inclined to accept information that pleases them <span class="citation">(<a href="#ref-swift_2016" role="doc-biblioref">Swift, 2016</a>)</span>.</p>
+<p>A study found that fact checking might be counterproductive, as familiarity bias in politics has shown that people tend to remember information and how they feel about it rather than the context it was learned. By repeating the false claim, it might increase the reader’s likelihood of accepting it as true. If the evidence is not strong enough to convince readers, then it might be spread even further than if the claim had been allowed to fall off on its own <span class="citation">(<a href="#ref-lewandowsky_2017" role="doc-biblioref">Lewandowsky et al., 2017</a>)</span>.</p>
+</div>
+<div id="individual-education" class="section level3">
+<h3>Individual Education</h3>
+<p>Another longer-term approach is to improve an individual’s ability to evaluate information sources. There has been an effort to teach critical-information skills to middle and high school students in the past few years. This can be especially helpful when the students are taught how information can be warped based on the perspective of who is presenting it. However, it is not yet clear whether these efforts are effective and if they will continue in the future <span class="citation">(<a href="#ref-jones_2017" role="doc-biblioref">Jones, 2017</a>)</span>.</p>
+</div>
+</div>
+<div id="algorithmic-detection" class="section level2">
+<h2>Algorithmic Detection</h2>
+<p>The definition fake news is quite simple in principle, but determining whether an article is false can be complex, even for humans. For the majority of articles, there is usually a mix of truthfulness and falsehood. The threshold for flagging a news article as fake news varies from reader to reader. Because of the political polarization leading up to and during the 2016 election, fake news became associated with a politician’s opposing viewpoint instead of false information. Additionally, there is content that does not contain falsehoods but is labeled as such because it attempts to persuade the reader, instead of inform.</p>
+<p>There are articles that are not “real news” that are not falsehoods either, such as commentary by citizens. Originally, “fake news” described satirical news, where information is made up for entertainment. Satire now lives in a strange place – some believe that it should be considered fake news, while others believe that it is unlikely to be construed as factual. In 2017, a satire site issued an apology for making their story “too real” after many were unable to detect that it was satire <span class="citation">(<a href="#ref-funke_2017" role="doc-biblioref">Funke, 2017</a>)</span>.</p>
+<p>Finally, there are those that argue that fake news should be defined as a continuum rather than a binary variable, as biased news exists somewhere in between fake and real. While it may be using real sources, the conclusions it draws might be dubious or opinionated. But it would be an exaggeration to call this fake news. Many fact checking sites have a continuum like this, but again these rely on human checkers and require a lot of time to ingest the vast amount of claims being published every day.</p>
+<p>The best case is to create a model that is able to detect fake news before it is published, effectively stopping the spread before it causes damage. This approach is difficult to implement, and could impede the first amendment. Facebook and Google have been attempting to introduce a filter for fake news, but their attempts are still in their infancy and their platforms are still maintained by humans, who make many mistakes on their own. If a model could be successfully built, platforms such as Facebook or Twitter could vet links in posts before they are sent, effectively preventing the dissemination of misinformation.</p>
+</div>
+</div>
+<div id="if-it-walks-like-a-duck" class="section level1">
+<h1>If It Walks Like a Duck…</h1>
+<p>As previously mentioned, fact checking is a labor intensive process, and there is no clear road to automation. Thus, if we want to build a model to accurately identify fake news <em>without</em> examining the actual claims that it makes, we can instead look at how the document is written.</p>
+<p>Stylometry (greek <em>stylos</em> (style) + <em>metron</em> (measure)) is a method of studying linguistic style, and has been applied in a variety of fields from art (literature, music, painting) to security affairs and economics<span class="citation">(<a href="#ref-belak_2008" role="doc-biblioref">Belak et al., 2008</a>)</span>. Content is quite easy to copy (such as A Starry Night - while I could not paint a very good replica, I could get close enough for you to make the connection between the two paintings), imitating style is almost impossible. In art, techniques have been developed to distinguish details such as brush patterns, canvas thread count, and paint composition <span class="citation">(<a href="#ref-liu_2016" role="doc-biblioref">Liu et al., 2016</a>)</span>. Stylometric analysis in literature typically focuses on determining authorship, but could be extended here to determine the intuitive differences between real and fake news articles.</p>
+<p>Let’s take a look at a couple of examples of each to get a feel for what to expect.</p>
+</div>
+<div id="data" class="section level1">
+<h1>Data</h1>
+<div id="source" class="section level2">
+<h2>Source</h2>
+<p>The data used in this article were combined from the collection of real/fake data scraped and labeled in <span class="citation">(<a href="#ref-dataset-origin" role="doc-biblioref">Ahmed et al., 2017</a>; <a href="#ref-random-news-dataset-origin" role="doc-biblioref">Horne &amp; Adali, 2017</a>; <a href="#ref-buzzfeed-dataset-origin" role="doc-biblioref">Silverman, 2016</a>)</span>. In total, it contains ~38,500 news articles, with the title, the body, and a label included.</p>
+</div>
+<div id="examples" class="section level2">
+<h2>Examples</h2>
+<div id="true" class="section level3">
+<h3>True</h3>
+<p>Most real news will begin with an attribution, as seen below - “STATE (News Org) -.” While this would be incredibly predictive if we just used this, we want to examine actual article content and remain organization agnostic. This will help protect against bias and increase the longevity of the model, as the same news groups might not exist in 10-20 years.</p>
+<table class=" " style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+As U.S. budget fight looms, Republicans flip their fiscal script
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;background-color: #eee !important;">
+WASHINGTON (Reuters) - The head of a conservative Republican faction in the U.S. Congress, who voted this month for a huge expansion of the national debt to pay for tax cuts, called himself a “fiscal conservative” on Sunday and urged budget restraint in 2018. In keeping with a sharp pivot under way among Republicans, U.S. Representative Mark Meadows, speaking on CBS’ “Face the Nation,” drew a hard line on federal spending, which lawmakers are bracing to do battle over in January. When they return from the holidays on Wednesday, lawmakers will begin trying to pass a federal budget in a fight likely to be linked to other issues, such as immigration policy, even as the November congressional election campaigns approach in which Republicans will seek to keep control of Congress. President Donald Trump and his Republicans want a big budget increase in military spending, while Democrats also want proportional increases for non-defense “discretionary” spending on programs that support education, scientific research, infrastructure, public health and environmental protection. “The (Trump) administration has already been willing to say: ‘We’re going to increase non-defense discretionary spending … by about 7 percent,’” Meadows, chairman of the small but influential House Freedom Caucus, said on the program. “Now, Democrats are saying that’s not enough, we need to give the government a pay raise of 10 to 11 percent. For a fiscal conservative, I don’t see where the rationale is. … Eventually you run out of other people’s money,” he said. Meadows was among Republicans who voted in late December for their party’s debt-financed tax overhaul, which is expected to balloon the federal budget deficit and add about $1.5 trillion over 10 years to the $20 trillion national debt. “It’s interesting to hear Mark talk about fiscal responsibility,” Democratic U.S. Representative Joseph Crowley said on CBS. Crowley said the Republican tax bill would require the United States to borrow $1.5 trillion, to be paid off by future generations, to finance tax cuts for corporations and the rich. “This is one of the least … fiscally responsible bills we’ve ever seen passed in the history of the House of Representatives. I think we’re going to be paying for this for many, many years to come,” Crowley said. Republicans insist the tax package, the biggest U.S. tax overhaul in more than 30 years, will boost the economy and job growth. House Speaker Paul Ryan, who also supported the tax bill, recently went further than Meadows, making clear in a radio interview that welfare or “entitlement reform,” as the party often calls it, would be a top Republican priority in 2018. In Republican parlance, “entitlement” programs mean food stamps, housing assistance, Medicare and Medicaid health insurance for the elderly, poor and disabled, as well as other programs created by Washington to assist the needy. Democrats seized on Ryan’s early December remarks, saying they showed Republicans would try to pay for their tax overhaul by seeking spending cuts for social programs. But the goals of House Republicans may have to take a back seat to the Senate, where the votes of some Democrats will be needed to approve a budget and prevent a government shutdown. Democrats will use their leverage in the Senate, which Republicans narrowly control, to defend both discretionary non-defense programs and social spending, while tackling the issue of the “Dreamers,” people brought illegally to the country as children. Trump in September put a March 2018 expiration date on the Deferred Action for Childhood Arrivals, or DACA, program, which protects the young immigrants from deportation and provides them with work permits. The president has said in recent Twitter messages he wants funding for his proposed Mexican border wall and other immigration law changes in exchange for agreeing to help the Dreamers. Representative Debbie Dingell told CBS she did not favor linking that issue to other policy objectives, such as wall funding. “We need to do DACA clean,” she said. On Wednesday, Trump aides will meet with congressional leaders to discuss those issues. That will be followed by a weekend of strategy sessions for Trump and Republican leaders on Jan. 6 and 7, the White House said. Trump was also scheduled to meet on Sunday with Florida Republican Governor Rick Scott, who wants more emergency aid. The House has passed an $81 billion aid package after hurricanes in Florida, Texas and Puerto Rico, and wildfires in California. The package far exceeded the $44 billion requested by the Trump administration. The Senate has not yet voted on the aid.
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="fake" class="section level3">
+<h3>Fake</h3>
+<p>The fake data contains a lot of formatting problems. We can see that all of the quotes and apostrophes are missing because of the encoding error, making “It’s” become “It s.” Additionally, we can see in the title that all-caps words are used to get the reader’s attention and bait them in. Finally, most of the fake news articles end with a photo attribution, whereas Reuters has their photo attribution embedded within the image, and was not captured within the text data.</p>
+<table class=" " style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+CNN CALLS IT: A Democrat Will Represent Alabama In The Senate For The First Time In 25 Years
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;background-color: #eee !important;">
+Alabama is a notoriously deep red state. It s a place where Democrats always think that we have zero chances of winning especially in statewide federal elections. However, that is just what happened on Tuesday night in the Special Election to replace Senator Jeff Sessions. Doug Jones, the Democratic Senate candidate who is known in the state for prosecuting the Ku Klux Klan members who bombed a church during the Civil Rights Movement and killed four little African American girls, will be the next Senator from Alabama. CNN has just called the race, as there seems no more GOP-leaning counties out there.To contrast, Roy Moore had been twice removed from the Alabama Supreme Court as Chief Justice for violating the law, and was also credibly accused of being a sexual predator toward teen girls. Despite all of that, though, the race was a nail biter, because Moore has a long history and a deep base in Alabama. Of course, decent people including Republicans were horrified at the idea of a man like Roy Moore going to the Senate. Despite the allegations of sexual predation, Moore also had said many incendiary things, such as putting forth the idea that Muslims shouldn t be allowed in Congress, that homosexuality should be illegal, and that America was great when slavery was legal. And that s just for starters, too.Thank you Alabama, for letting sanity prevail in this race. Oh, and a message to Democrats this is proof we can compete everywhere. Get a fifty state strategy going so we can blow the GOP outta the water in 2018.Featured image via Justin Sullivan/Getty Images
+</td>
+</tr>
+</tbody>
+</table>
+<p>We as humans can see that there is a pretty significant difference between the two articles. The fake news article spoonfeeds opinions to the reader, without much evidence or support (any statements are not quoted or cited). The real news contains quotes and sources, and expects the reader to develop their own opinion given the information. Using these features and others such as the length of the article, the proportion of capital letters to total characters, and the frequency rate of specific words, we can start to paint a picture of how fake news differs from real news.</p>
+</div>
+</div>
+</div>
+<div id="results" class="section level1">
+<h1>Results</h1>
+<p>Overall, the model that was built was able to predict with 95% accuracy whether a given article is fake or not. This is a great proof of concept that the future of disinformation protection looks more and more like algorithmically detecting fake news before it is spread, rather than fact checking.</p>
+<p>There are a few caveats to this result, of course. The dataset is far from perfect – and is quite homogeneous (many of the articles are sources from the same couple news sites). A wide gamut of news articles needs to be tested to see if this methodology is effective. Additionally, the mere creation of a model such as this can create a feedback loop that results in the model performing poorly over time. This is more likely if the parameters are known to the fake news article writers, as they can change their style to avoid detection. This type of cat and mouse game will always be present, but especially with fake news and spam there will never be a perfect solution that works for every single case.</p>
+</div>
+<div id="conclusion" class="section level1">
+<h1>Conclusion</h1>
+<p>As we progress into the next presidential election and more social media platforms are created and destroyed, the emphasis for dealing with fake news must shift from a reactive approach (fact checking) to a proactive approach (algorithmic detection) to effectively deal with the dissemination of false information. Those implementing these solutions must be careful to avoid censorship, but this line is present with any type of online or offline moderation of content.</p>
+</div>
+<div id="bibliography" class="section level1 unnumbered">
+<h1>Bibliography</h1>
+<div id="refs" class="references csl-bib-body hanging-indent" line-spacing="2">
+<div id="ref-dataset-origin" class="csl-entry">
+Ahmed, H., Traore, I., &amp; Saad, S. (2017). Detecting opinion spams and fake news using text classification. <em>Security and Privacy</em>, <em>1</em>, e9. <a href="https://doi.org/10.1002/spy2.9">https://doi.org/10.1002/spy2.9</a>
+</div>
+<div id="ref-allcott_2017" class="csl-entry">
+Allcott, H., &amp; Gentzkow, M. (2017). Social media and fake news in the 2016 election. <em>Journal of Economic Perspectives</em>, <em>31</em>(2), 211–236. <a href="https://doi.org/10.1257/jep.31.2.211">https://doi.org/10.1257/jep.31.2.211</a>
+</div>
+<div id="ref-belak_2008" class="csl-entry">
+Belak, S., Radman Pesa, A., &amp; Belak, B. (2008). Stylometry–definition and development. <em>Annals of DAAAM <span>&amp;</span> Proceedings</em>, 85+. <a href="https://link.gale.com/apps/doc/A225316012/AONE?u=s8887317&amp;sid=googleScholar&amp;xid=c9e0d273">https://link.gale.com/apps/doc/A225316012/AONE?u=s8887317&amp;sid=googleScholar&amp;xid=c9e0d273</a>
+</div>
+<div id="ref-funke_2017" class="csl-entry">
+Funke, D. (2017). <em>A satirical fake news site apologized for making a story too real</em>. <a href="https://www.poynter.org/fact-checking/2017/a-satirical-fake-news-site-apologized-for-making-a-story-too-real/">https://www.poynter.org/fact-checking/2017/a-satirical-fake-news-site-apologized-for-making-a-story-too-real/</a>
+</div>
+<div id="ref-random-news-dataset-origin" class="csl-entry">
+Horne, B. D., &amp; Adali, S. (2017). <em>This just in: Fake news packs a lot in title, uses simpler, repetitive content in text body, more similar to satire than real news</em>. <a href="http://arxiv.org/abs/1703.09398">http://arxiv.org/abs/1703.09398</a>
+</div>
+<div id="ref-jones_2017" class="csl-entry">
+Jones, C. (2017). <em>Bill would help california schools teach about <span>“fake news,”</span> media literacy</em>. <a href="https://edsource.org/2017/bill-would-help-california-schools-teach-about-fake-news-media-literacy/58236">https://edsource.org/2017/bill-would-help-california-schools-teach-about-fake-news-media-literacy/58236</a>
+</div>
+<div id="ref-lazer_2018" class="csl-entry">
+Lazer, D. M. J., Baum, M. A., Benkler, Y., Berinsky, A. J., Greenhill, K. M., Menczer, F., Metzger, M. J., Nyhan, B., Pennycook, G., Rothschild, D., Schudson, M., Sloman, S. A., Sunstein, C. R., Thorson, E. A., Watts, D. J., &amp; Zittrain, J. L. (2018). The science of fake news. <em>Science (American Association for the Advancement of Science)</em>, <em>359</em>(6380), 1094–1096. <a href="https://doi.org/10.1126/science.aao2998">https://doi.org/10.1126/science.aao2998</a>
+</div>
+<div id="ref-lewandowsky_2017" class="csl-entry">
+Lewandowsky, S., Ecker, U. K. H., &amp; Cook, J. (2017). Beyond misinformation: Understanding and coping with the <span>“post-truth”</span> era. <em>Journal of Applied Research in Memory and Cognition</em>, <em>6</em>(4), 353–369. https://doi.org/<a href="https://doi.org/10.1016/j.jarmac.2017.07.008">https://doi.org/10.1016/j.jarmac.2017.07.008</a>
+</div>
+<div id="ref-liu_2016" class="csl-entry">
+Liu, H., Chan, R. H., &amp; Yao, Y. (2016). Geometric tight frame based stylometry for art authentication of van gogh paintings. <em>Applied and Computational Harmonic Analysis</em>, <em>41</em>(2), 590–602. https://doi.org/<a href="https://doi.org/10.1016/j.acha.2015.11.005">https://doi.org/10.1016/j.acha.2015.11.005</a>
+</div>
+<div id="ref-shearer_2017" class="csl-entry">
+Shearer, E., &amp; Gottfried, J. (2017). <em>News use across social media platforms 2017</em>. <a href="https://www.journalism.org/2017/09/07/news-use-across-social-media-platforms-2017/">https://www.journalism.org/2017/09/07/news-use-across-social-media-platforms-2017/</a>
+</div>
+<div id="ref-buzzfeed-dataset-origin" class="csl-entry">
+Silverman, C. (2016). <em>This analysis shows how viral fake election news stories outperformed real news on facebook</em>. <a href="https://www.buzzfeednews.com/article/craigsilverman/viral-fake-election-news-outperformed-real-news-on-facebook">https://www.buzzfeednews.com/article/craigsilverman/viral-fake-election-news-outperformed-real-news-on-facebook</a>
+</div>
+<div id="ref-swift_2016" class="csl-entry">
+Swift, A. (2016). Americans’ trust in mass media sinks to new low. In <em>Gallup News</em>. Gallup, Inc. <a href="https://news.gallup.com/poll/195542/americans-trust-mass-media-sinks-new-low.aspx">https://news.gallup.com/poll/195542/americans-trust-mass-media-sinks-new-low.aspx</a>
+</div>
+<div id="ref-vosoughi_2018" class="csl-entry">
+Vosoughi, S., Roy, D., &amp; Aral, S. (2018). The spread of true and false news online. <em>Science (American Association for the Advancement of Science)</em>, <em>359</em>(6380), 1146–1151. <a href="https://doi.org/10.1126/science.aap9559">https://doi.org/10.1126/science.aap9559</a>
+</div>
+</div>
+</div>

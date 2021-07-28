@@ -1,0 +1,169 @@
+---
+title: 'FAKE NEWS: How we can stem the spread of fake news through machine learning'
+author: Zachary Haroian
+date: '2021-07-27'
+slug: fake-news-classifying-falsehoods-through-stylometric-analysis
+bibliography: bibliography.bib
+csl: apa.csl
+categories: []
+tags: []
+---
+
+![](images/fake-news-hero-img.jpg)
+
+# The Problem
+
+Fake news is currently seeping it way through society, spreading falsehoods and manipulating its readers into a sense of fear and urgency. Fake news is defined as fabricated information that mimics news media content without the editorial norms and processes for ensuring accuracy and credibility of information [@lazer_2018]. It is parasitic on standard news outlets, both benefiting from and undermining their credibility. Social media platforms act as a key conduit for fake news sites, as the ease of creating fake profiles makes impersonation trivial [@allcott_2017]. About 47% of Americans report getting news from social media often or sometimes, with Facebook as the dominant source [@shearer_2017].
+
+The rise of fake news is recent, but is not a novel occurrence. After the widespread use of propaganda in World War I, journalists moved to remain more objective and focused on building public trust and credibility. This trust has been severely eroded due to the internet, where the competition has a much lower cost of entry to distribute information. What was once gatekept by large news corporations can now be done by anyone with a computer and an internet connection. The lack of trust reached a historic low in 2016, with 51% of Democrats and 14% of Republicans expressing "a fair amount" or "a great deal" of trust in mass media as a news source [@swift_2016].
+
+Part of the problem with fake news is how easily it spreads. False information on Twitter is typically retweeted by many more people, and far more rapidly, than true information, especially when the topic is politics. This phenomenon of virality is hard to combat, as it is incredibly hard to find each person that was exposed to the falsehood and convince them of the truth. Surprisingly, robots accelerate the spread of true and false news at the same rate, implying that false news spreads more than truth because of humans [@vosoughi_2018]. In fact, the most popular fake news stories in the last three months of the presidential campaign generated more engagement on Facebook than the top real news stories.
+
+# Potential Solutions
+
+## Empowering Readers
+
+### Fact Checking
+
+Fact checking has been adopted by many websites to evaluate the veracity of claims posted on the internet. Despite its prevalence, it struggles to combat the spread of fake news. This occurs for a couple of reasons. Individuals will only seek to explore a claim's accuracy if it disagrees with their inner beliefs or they are incentivized to do so. Typically, readers ingest information without thinking critically about its source, especially on informal, social platforms. Further, people are prone to confirmation bias and desirability bias. They prefer information that confirms their preexisting beliefs, and are inclined to accept information that pleases them [@swift_2016].
+
+A study found that fact checking might be counterproductive, as familiarity bias in politics has shown that people tend to remember information and how they feel about it rather than the context it was learned. By repeating the false claim, it might increase the reader's likelihood of accepting it as true. If the evidence is not strong enough to convince readers, then it might be spread even further than if the claim had been allowed to fall off on its own [@lewandowsky_2017].
+
+### Individual Education
+
+Another longer-term approach is to improve an individual's ability to evaluate information sources. There has been an effort to teach critical-information skills to middle and high school students in the past few years. This can be especially helpful when the students are taught how information can be warped based on the perspective of who is presenting it. However, it is not yet clear whether these efforts are effective and if they will continue in the future [@jones_2017].
+
+## Algorithmic Detection
+
+The definition fake news is quite simple in principle, but determining whether an article is false can be complex, even for humans. For the majority of articles, there is usually a mix of truthfulness and falsehood. The threshold for flagging a news article as fake news varies from reader to reader. Because of the political polarization leading up to and during the 2016 election, fake news became associated with a politician's opposing viewpoint instead of false information. Additionally, there is content that does not contain falsehoods but is labeled as such because it attempts to persuade the reader, instead of inform.
+
+There are articles that are not "real news" that are not falsehoods either, such as commentary by citizens. Originally, "fake news" described satirical news, where information is made up for entertainment. Satire now lives in a strange place -- some believe that it should be considered fake news, while others believe that it is unlikely to be construed as factual. In 2017, a satire site issued an apology for making their story "too real" after many were unable to detect that it was satire [@funke_2017].
+
+Finally, there are those that argue that fake news should be defined as a continuum rather than a binary variable, as biased news exists somewhere in between fake and real. While it may be using real sources, the conclusions it draws might be dubious or opinionated. But it would be an exaggeration to call this fake news. Many fact checking sites have a continuum like this, but again these rely on human checkers and require a lot of time to ingest the vast amount of claims being published every day.
+
+The best case is to create a model that is able to detect fake news before it is published, effectively stopping the spread before it causes damage. This approach is difficult to implement, and could impede the first amendment. Facebook and Google have been attempting to introduce a filter for fake news, but their attempts are still in their infancy and their platforms are still maintained by humans, who make many mistakes on their own. If a model could be successfully built, platforms such as Facebook or Twitter could vet links in posts before they are sent, effectively preventing the dissemination of misinformation.
+
+# If It Walks Like a Duck...
+
+As previously mentioned, fact checking is a labor intensive process, and there is no clear road to automation. Thus, if we want to build a model to accurately identify fake news *without* examining the actual claims that it makes, we can instead look at how the document is written.
+
+Stylometry (greek *stylos* (style) + *metron* (measure)) is a method of studying linguistic style, and has been applied in a variety of fields from art (literature, music, painting) to security affairs and economics[@belak_2008]. Content is quite easy to copy (such as A Starry Night - while I could not paint a very good replica, I could get close enough for you to make the connection between the two paintings), imitating style is almost impossible. In art, techniques have been developed to distinguish details such as brush patterns, canvas thread count, and paint composition [@liu_2016]. Stylometric analysis in literature typically focuses on determining authorship, but could be extended here to determine the intuitive differences between real and fake news articles.
+
+Let's take a look at a couple of examples of each to get a feel for what to expect.
+
+# Data
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = F, cache = T)
+library(tidyverse)
+library(tidytext)
+library(textstem)
+library(data.table)
+library(stylo)
+library(tidymodels)
+library(koRpus)
+library(knitr)
+library(kableExtra)
+
+combine_txt <- function(path) {
+  filelist = list.files(path = path, pattern = ".*.txt")
+  
+  sapply(paste(path, filelist, sep = ""), read_file, simplify = F) %>%
+    enframe() %>%
+    rename(path = name, text = value) %>%
+    unnest(text) %>%
+    rowid_to_column("id")
+}
+
+read_files <- function(path, txt, title, label_name) {
+  combine_txt(paste(path, txt, sep = "/")) %>%
+    left_join(combine_txt(paste(path, title, sep = "")), by = "id", suffix = c("_txt", "_title")) %>%
+    rename(title = text_title, text = text_txt) %>%
+    select(title, text) %>%
+    mutate(label = label_name)
+}
+
+read_data <- function(path, label_name) {
+  read_csv(path, col_types = cols(
+      title = col_character(),
+      text = col_character(),
+      subject = col_character(),
+      date = col_character()
+    )) %>%
+    select(title, text) %>%
+    mutate(label = label_name) 
+}
+
+news <- read_data("data/ahmed et al/Fake.csv", "Fake") %>%
+  rbind(read_data("data/ahmed et al/True.csv", "True")) %>%
+  rbind(read_files("data/Buzzfeed Political News Dataset/", "Fake/", "Fake_titles/", "Fake")) %>%
+  rbind(read_files("data/Buzzfeed Political News Dataset/", "Real/", "Real_titles/", "True")) %>%
+  rbind(read_files("data/Random Political News Dataset/", "Fake/", "Fake_titles/", "Fake")) %>%
+  rbind(read_files("data/Random Political News Dataset/", "Real/", "Real_titles/", "True")) %>%
+  # Remove posts that only contain links in title (unparsed)
+  filter(!grepl("http", title)) %>%
+  # Squish whitespace
+  mutate(title = str_squish(title), text = str_squish(text)) %>%
+  # Remove duplicates
+  unique(by = title) %>%
+  # Remove latin/non-ASCII characters
+  mutate(title = iconv(title, from = "UTF-8", to="ASCII//TRANSLIT")) %>%
+  mutate(text = iconv(text, from = "UTF-8", to="ASCII//TRANSLIT")) %>%
+  # Drop NAs
+  drop_na() %>%
+  # Add id
+  rowid_to_column("id")
+
+# Clean up environment
+rm(list = c("combine_txt", "read_data", "read_files"))
+```
+
+## Source
+
+The data used in this article were combined from the collection of real/fake data scraped and labeled in [@dataset-origin; @buzzfeed-dataset-origin; @random-news-dataset-origin]. In total, it contains \~38,500 news articles, with the title, the body, and a label included.
+
+## Examples
+
+### True
+
+Most real news will begin with an attribution, as seen below - "STATE (News Org) - ". While this would be incredibly predictive if we just used this, we want to examine actual article content and remain organization agnostic. This will help protect against bias and increase the longevity of the model, as the same news groups might not exist in 10-20 years.
+
+```{r}
+news %>% 
+  filter(label == "True") %>%
+  slice(1) %>%
+  pull(text) %>%
+  kable(col.names = c("As U.S. budget fight looms, Republicans flip their fiscal script")) %>%
+  kable_styling(htmltable_class = "") %>%
+  column_spec(1, background = "#eee")
+```
+
+### Fake
+
+The fake data contains a lot of formatting problems. We can see that all of the quotes and apostrophes are missing because of the encoding error, making "It's" become "It s". Additionally, we can see in the title that all-caps words are used to get the reader's attention and bait them in. Finally, most of the fake news articles end with a photo attribution, whereas Reuters has their photo attribution embedded within the image, and was not captured within the text data.
+
+```{r}
+news %>% 
+  filter(label == "Fake") %>%
+  slice(24) %>%
+  # Escape @ symbol 
+  mutate(text = gsub("(@", "(\\@", text, fixed = T)) %>%
+  pull(text) %>%
+  kable(col.names = c("CNN CALLS IT: A Democrat Will Represent Alabama In The Senate For The First Time In 25 Years")) %>%
+  kable_styling(htmltable_class = "") %>%
+  column_spec(1, background = "#eee")
+```
+
+We as humans can see that there is a pretty significant difference between the two articles. The fake news article spoonfeeds opinions to the reader, without much evidence or support (any statements are not quoted or cited). The real news contains quotes and sources, and expects the reader to develop their own opinion given the information. Using these features and others such as the length of the article, the proportion of capital letters to total characters, and the frequency rate of specific words, we can start to paint a picture of how fake news differs from real news.
+
+# Results
+
+Overall, the model that was built was able to predict with 95% accuracy whether a given article is fake or not. This is a great proof of concept that the future of disinformation protection looks more and more like algorithmically detecting fake news before it is spread, rather than fact checking.
+
+There are a few caveats to this result, of course. The dataset is far from perfect -- and is quite homogeneous (many of the articles are sources from the same couple news sites). A wide gamut of news articles needs to be tested to see if this methodology is effective. Additionally, the mere creation of a model such as this can create a feedback loop that results in the model performing poorly over time. This is more likely if the parameters are known to the fake news article writers, as they can change their style to avoid detection. This type of cat and mouse game will always be present, but especially with fake news and spam there will never be a perfect solution that works for every single case.
+
+# Conclusion
+
+As we progress into the next presidential election and more social media platforms are created and destroyed, the emphasis for dealing with fake news must shift from a reactive approach (fact checking) to a proactive approach (algorithmic detection) to effectively deal with the dissemination of false information. Those implementing these solutions must be careful to avoid censorship, but this line is present with any type of online or offline moderation of content.
+
+# Bibliography

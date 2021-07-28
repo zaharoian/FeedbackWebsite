@@ -1,7 +1,7 @@
 ---
-title: Updated Project Proposal
+title: Fake News Project Proposal
 author: Zachary Haroian
-date: '2021-06-16'
+date: '2021-08-18'
 slug: updated-project-proposal
 bibliography: bibliography.bib
 csl: apa.csl
