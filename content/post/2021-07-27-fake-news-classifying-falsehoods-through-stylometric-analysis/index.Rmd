@@ -14,7 +14,7 @@ tags: []
 # The Problem
 
 ```{r setup, include=F}
-knitr::opts_chunk$set(echo = F, cache = T)
+knitr::opts_chunk$set(echo = F)
 
 library(tidyverse)
 library(tidytext)
@@ -26,6 +26,7 @@ library(koRpus)
 library(knitr)
 library(kableExtra)
 library(plotly)
+library(wordcloud)
 ```
 
 ```{r setup-2, include = F}
@@ -377,6 +378,7 @@ news %>%
 To get a better idea of what separates fake and real news, let's look at the distinguishing words that each type uses and how common each is within the respective articles. The wordcloud below shows the difference between the words chosen between fake and real news articles. The size of each word is the relative frequency that it appears *against* the other document. That is to say, if fake news uses a word more than real news, it will appear on the fake news side, and its size will be determined by how many more times it was used, and how frequently other words were used. Let's take a look.
 
 ```{r wordclouds, warning = F}
+
 corpus_true %>%
   make.frequency.list(relative = F, value = T) %>%
   enframe() %>%
